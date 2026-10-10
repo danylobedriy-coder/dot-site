@@ -140,8 +140,9 @@
   </section>
 
   <dialog id="dlg" aria-labelledby="dlgTitle">
-    <div class="tabrow"><span class="tab" id="dlgTitle">—</span><button class="btn ghost" id="dlgClose" type="button" aria-label="Закрити">✕</button></div>
+    <div class="tabrow"><button class="btn ghost" id="dlgClose" type="button">← Назад</button><span class="tab" id="dlgTitle">—</span></div>
     <div class="inner" id="dlgBody"></div>
+    <div class="dlgnav"><button class="btn ghost" id="dlgPrev" type="button">←</button><button class="btn ghost" id="dlgBack" type="button">До списку</button><button class="btn ghost" id="dlgNext" type="button">→</button></div>
   </dialog>
 
 </div>
@@ -154,7 +155,7 @@
   const URL_OK=/^https:\/\/script\.google\.com\/.+\/exec$/.test(CFG.SCRIPT_URL||"");
   const $=s=>document.querySelector(s);
   const areas=[...document.querySelectorAll("textarea[data-field]")];
-  const state={name:"",submitted:false,changed:false,submittedAt:""}; FIELDS.forEach(f=>state[f]="");
+  const state={name:"",submitted:false,changed:false,submittedAt:"",snap:null}; FIELDS.forEach(f=>state[f]="");
   const LS="dot-"+FORM;
   let timer=null, inflight=false, dirty=false, sending=false;
 
@@ -164,6 +165,7 @@
 
   const lines=t=>t.split("\n").map(s=>s.trim()).filter(Boolean).length;
   const setSave=(t,cls)=>{const e=$("#saveState");e.textContent=t;e.className=cls||"muted"};
+  const snapNow=()=>JSON.stringify(FIELDS.map(f=>state[f]||""));
   function local(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
   function render(){
     chips.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.name===state.name)));
@@ -172,10 +174,11 @@
     $("#prog").textContent="Заповнено "+filled+" / 7";
     const btn=$("#submit");
     btn.disabled=!state.name||sending;
-    btn.textContent=sending?"Надсилаю…":(!state.submitted?"Здати домашку":(state.changed?"Здати ще раз (є зміни)":"Здано ✓"));
+    btn.textContent=sending?"Надсилаю…":(!state.submitted||state.changed?"Здати відповіді":"Здано ✓");
+    btn.classList.toggle("ghost",state.submitted&&!state.changed&&!sending);
     const m=$("#doneMsg");
     if(state.submitted){m.hidden=false;m.innerHTML="";const b=document.createElement("b");
-      b.textContent=state.changed?"Є нові зміни після здачі — вони вже зберігаються, а кнопкою можна здати ще раз.":("Здано"+(state.submittedAt?" о "+state.submittedAt:"")+". Не показуй відповіді нікому до сесії.");m.appendChild(b)}
+      b.textContent=state.changed?"Ти змінив відповіді після здачі. Натисни «Здати відповіді», щоб здати нову версію.":("Здано"+(state.submittedAt?" о "+state.submittedAt:"")+". Не показуй відповіді нікому до сесії.");m.appendChild(b)}
     else m.hidden=true;
   }
   function schedule(){local();dirty=true;clearTimeout(timer);
@@ -197,12 +200,13 @@
   }
 
   try{const d=JSON.parse(localStorage.getItem(LS)||"null");if(d)Object.assign(state,d)}catch(e){}
+  if(state.submitted&&state.snap==null)state.snap=state.changed?"":snapNow();
   areas.forEach(a=>{a.value=state[a.dataset.field]||"";
-    a.addEventListener("input",()=>{state[a.dataset.field]=a.value;if(state.submitted)state.changed=true;render();schedule()});
+    a.addEventListener("input",()=>{state[a.dataset.field]=a.value;if(state.submitted)state.changed=snapNow()!==state.snap;render();schedule()});
     a.addEventListener("blur",()=>{if(dirty){clearTimeout(timer);push()}})});
   chips.forEach(b=>b.addEventListener("click",()=>{state.name=b.dataset.name;render();schedule()}));
   $("#submit").addEventListener("click",async()=>{
-    state.submitted=true;state.changed=false;
+    state.submitted=true;state.changed=false;state.snap=snapNow();
     state.submittedAt=new Date().toLocaleTimeString("uk-UA",{hour:"2-digit",minute:"2-digit"});
     sending=true;render();local();clearTimeout(timer);dirty=true;
     while(inflight) await new Promise(r=>setTimeout(r,200));
@@ -238,14 +242,29 @@
       if(!i){b.disabled=true;b.style.opacity=".45"} else b.addEventListener("click",()=>openDlg(i));
       box.appendChild(b)});
   }
+  let order=[],cur=-1,dlgPushed=false;
+  const dlg=$("#dlg");
   function openDlg(i){
+    order=(CFG.TEAM||[]).map(n=>items.find(x=>x.name===n)).filter(Boolean);cur=order.indexOf(i);
+    fill(i);
+    if(!dlg.open){if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","");
+      try{history.pushState({dotDlg:1},"");dlgPushed=true}catch(e){}}
+  }
+  function step(d){if(!order.length)return;cur=(cur+d+order.length)%order.length;fill(order[cur]);dlg.scrollTop=0}
+  function hide(){if(dlg.close)dlg.close();else dlg.removeAttribute("open")}
+  function closeDlg(){if(dlgPushed){history.back()}else hide()}
+  window.addEventListener("popstate",()=>{if(dlg.open){dlgPushed=false;hide()}});
+  dlg.addEventListener("cancel",e=>{e.preventDefault();closeDlg()});
+  dlg.addEventListener("close",()=>{if(dlgPushed){dlgPushed=false;history.back()}document.getElementById("ready").scrollIntoView({block:"start"})});
+  function fill(i){
     $("#dlgTitle").textContent=i.name+(i.submitted?" · здано":" · ще пише");
     const body=$("#dlgBody");body.textContent="";
     body.appendChild(el("p","hint","останнє збереження: "+fmt(i.updatedAt)));
     Object.keys(LABELS).forEach(f=>{const v=String((i.data||{})[f]||"");const a=el("div","ans");
       a.appendChild(el("p","hint",LABELS[f]+(f.startsWith("brief")?" · "+lines(v).length+" назв":"")));
       a.appendChild(el("pre","",v.trim()||"—"));body.appendChild(a)});
-    const d=$("#dlg");if(d.showModal)d.showModal();else d.setAttribute("open","");
+    const many=order.length>1;$("#dlgPrev").hidden=$("#dlgNext").hidden=!many;
+    if(many){$("#dlgPrev").textContent="← "+order[(cur-1+order.length)%order.length].name;$("#dlgNext").textContent=order[(cur+1)%order.length].name+" →"}
   }
   async function open(key){
     $("#readyErr").hidden=true;
@@ -256,8 +275,11 @@
   $("#readyOpen").addEventListener("click",()=>{const k=$("#readyPw").value.trim();if(k)open(k)});
   $("#readyPw").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#readyOpen").click()}});
   $("#readyRefresh").addEventListener("click",()=>{let k="";try{k=localStorage.getItem(KEY)||""}catch(e){}if(k)open(k)});
-  $("#dlgClose").addEventListener("click",()=>$("#dlg").close?$("#dlg").close():$("#dlg").removeAttribute("open"));
-  $("#dlg").addEventListener("click",e=>{if(e.target.id==="dlg")$("#dlg").close()});
+  $("#dlgClose").addEventListener("click",closeDlg);
+  $("#dlgBack").addEventListener("click",closeDlg);
+  $("#dlgPrev").addEventListener("click",()=>step(-1));
+  $("#dlgNext").addEventListener("click",()=>step(1));
+  dlg.addEventListener("click",e=>{if(e.target===dlg)closeDlg()});
   let k="";try{k=localStorage.getItem(KEY)||""}catch(e){}
   if(k&&/\/exec$/.test(CFG.SCRIPT_URL||""))open(k);
 })();
