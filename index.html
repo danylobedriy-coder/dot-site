@@ -3,286 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Неймінг DOT — домашка</title>
+<meta name="robots" content="noindex">
+<title>DOT — робочий простір</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 <div class="wrap">
+  <nav class="topnav" aria-label="Навігація"><div class="crumbs"><a class="crumb" href="/" aria-current="page">DOT</a></div></nav>
 
   <section class="card">
-    <div class="tabrow"><span class="tab">DOT / неймінг / домашка</span></div>
+    <div class="tabrow"><span class="tab">Робочий простір</span></div>
     <div class="inner">
-      <h1>Привіт! Перед сесією неймінгу — домашка приблизно на 1 годину.</h1>
-      <p>Всередині:</p>
-      <ul class="dash">
-        <li>три брифи — наш, бриф конкурента і бриф зовсім іншої речі. Для кожного придумай <b>15–20 назв</b>;</li>
-        <li>діамант — чотири питання про те, куди ми йдемо як студія.</li>
-      </ul>
-      <p><b>Правила</b></p>
-      <ul class="dash">
-        <li>Без фільтра: дивні, смішні, дурні назви — записуй усе. Погана назва може привести до сильної.</li>
-        <li>Одна назва — один рядок.</li>
-        <li>Свої відповіді нікому не показуй до сесії. Інші їх не бачать.</li>
-        <li>Все зберігається автоматично — можна закрити сторінку і повернутись з того ж пристрою.</li>
-      </ul>
-      <div>
-        <p class="q" id="whoLabel"><b>Хто ти?</b></p>
-        <div class="row" role="group" aria-labelledby="whoLabel" id="who"></div>
-      </div>
-      <div class="notice" id="setupNote" hidden>Сайт ще не підключено до складу відповідей — зараз усе зберігається лише в цьому браузері.</div>
+      <h1>DOT</h1>
+      <p class="muted">Внутрішні задачі студії. Обери, над чим працюємо зараз.</p>
     </div>
   </section>
 
-  <div class="status" role="status" aria-live="polite">
-    <b id="prog">Заповнено 0 / 7</b>
-    <span id="saveState" class="muted">Обери своє ім'я, щоб почати</span>
+  <div class="tiles">
+    <a class="tile" href="/naming/">
+      <span class="tile-n">01</span>
+      <span class="tile-t">Неймінг</span>
+      <span class="tile-d">Нова назва для студії: домашка, сесія, тест.</span>
+      <span class="tile-s"><span class="pill done">зараз</span><span class="go">→</span></span>
+    </a>
+    <div class="tile off" aria-disabled="true">
+      <span class="tile-n">02</span>
+      <span class="tile-t">Наступне</span>
+      <span class="tile-d">Нові задачі з'являтимуться тут.</span>
+      <span class="tile-s"><span class="pill">згодом</span></span>
+    </div>
   </div>
-
-  <section class="card">
-    <div class="tabrow"><span class="tab">Бриф №1 — Наш</span></div>
-    <div class="inner">
-      <p class="brief">«Невелика студія з чотирьох молодих архітекторів і дизайнерів працює на перетині дизайну, архітектури і меблів. Набір напрямів ще росте. Студія вирішила змінити назву: поточна губиться серед інших і не показує, ким вони стають. Придумай нову назву.»</p>
-      <label class="q" for="b1">Твої 15–20 назв</label>
-      <textarea class="names" id="b1" data-field="brief1" placeholder="одна назва — один рядок"></textarea>
-      <div class="meta"><span>Одна назва — один рядок.</span><span class="count" data-for="b1">0 / 15–20</span></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="tabrow"><span class="tab">Бриф №2 — Конкурент</span></div>
-    <div class="inner">
-      <p class="brief">«Архітектурне бюро "Проєктна майстерня Бєляєвих", яке 10 років робило житлову архітектуру, виходить у громадські простори і запускає власну лінію меблів. Стара назва — прізвище засновників — більше не підходить. Придумай нову назву.»</p>
-      <label class="q" for="b2">Твої 15–20 назв</label>
-      <textarea class="names" id="b2" data-field="brief2" placeholder="одна назва — один рядок"></textarea>
-      <div class="meta"><span>Тут можна сміливіше — це не наша студія.</span><span class="count" data-for="b2">0 / 15–20</span></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="tabrow"><span class="tab">Бриф №3 — Інша річ</span></div>
-    <div class="inner">
-      <p class="brief">«Українська компанія робить міські велосипеди і запускає новий бренд. Велосипеди прості, надійні, з продуманими дрібницями. Придумай назву бренду.»</p>
-      <label class="q" for="b3">Твої 15–20 назв</label>
-      <textarea class="names" id="b3" data-field="brief3" placeholder="одна назва — один рядок"></textarea>
-      <div class="meta"><span>Не думай про студію — думай про велосипед.</span><span class="count" data-for="b3">0 / 15–20</span></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="tabrow"><span class="tab">Фреймворк Diamond</span></div>
-    <div class="inner">
-      <h2>Діамант: куди ми йдемо</h2>
-      <p>Діамант — інструмент агенції Lexicon (вони назвали BlackBerry, Pentium, Swiffer). Замість «яке слово нам треба» ми спершу домовляємось, куди йдемо. Чотири питання — чотири кути ромба. Відповідай коротко, 1–3 речення, але конкретно.</p>
-      <svg class="diamond" viewBox="0 0 520 330" role="img" aria-label="Ромб: перемога зверху, що маємо праворуч, чого бракує знизу, що сказати ліворуч">
-        <polygon points="260,48 400,165 260,282 120,165"/>
-        <circle cx="260" cy="48" r="6"/><circle cx="400" cy="165" r="6"/><circle cx="260" cy="282" r="6"/><circle cx="120" cy="165" r="6"/>
-        <text x="260" y="28" text-anchor="middle">↑ Перемога</text>
-        <text x="414" y="160">→ Що</text><text x="414" y="178">маємо</text>
-        <text x="260" y="312" text-anchor="middle">↓ Чого бракує</text>
-        <text x="106" y="160" text-anchor="end">Що ←</text><text x="106" y="178" text-anchor="end">сказати</text>
-      </svg>
-      <div class="example">
-        <p><b>Приклад — Swiffer</b> (швабра від Procter &amp; Gamble, діамант Lexicon):</p>
-        <p><b>↑ Перемога:</b> створити пристрій, який змінить те, як миють підлогу, і продавати його дорожче, бо його не сприймають як швабру.</p>
-        <p><b>→ Що маємо:</b> легший і ефективніший пристрій, у який вклали знання з Pampers та інших брендів.</p>
-        <p><b>↓ Чого бракує:</b> нас ні за яких умов не мають сприйняти як ще одну швабру — інакше не буде ні продажів, ні ціни.</p>
-        <p><b>← Що сказати:</b> логічно — це ефективніше за швабру; емоційно — ніхто не любить мити підлогу, тож додаймо радості.</p>
-      </div>
-      <p class="hint">Перевірка: якщо твою відповідь можна підставити будь-якій іншій студії — вона надто загальна, загостри її.</p>
-      <div class="dq">
-        <label class="q" for="d1">↑ Як виглядає наша перемога через 3–5 років?</label>
-        <span class="hint">Ким нас знають? Які 2–3 проєкти в портфоліо? За що нам платять більше, ніж іншим? Чим ми точно НЕ хочемо стати?</span>
-        <textarea id="d1" data-field="win"></textarea>
-      </div>
-      <div class="dq">
-        <label class="q" for="d2">→ Що в нас уже є, щоб виграти?</label>
-        <span class="hint">Що ми вміємо, чого не вміють типові студії? Що дає нам те, що ми робимо архітектуру, дизайн і меблі разом? Що є в кожного з нас чотирьох?</span>
-        <textarea id="d2" data-field="have"></textarea>
-      </div>
-      <div class="dq">
-        <label class="q" for="d3">↓ Чого нам бракує, щоб виграти?</label>
-        <span class="hint">Як нас НЕ мають сприймати ні за яких умов? Чому клієнт сьогодні може піти до іншої студії? Чого бракує найбільше — довіри, досвіду, портфоліо, впізнаваності?</span>
-        <textarea id="d3" data-field="need"></textarea>
-      </div>
-      <div class="dq">
-        <label class="q" for="d4">← Що наша назва має «сказати» світу?</label>
-        <span class="hint">Що назва має передати логічно? А що емоційно? Що ми хочемо сказати, але поки не можемо? Якщо прибрати слова «дизайн», «архітектура», «простір» — що лишається?</span>
-        <textarea id="d4" data-field="say"></textarea>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="tabrow"><span class="tab">Готово?</span></div>
-    <div class="inner">
-      <h2>Здати домашку</h2>
-      <p class="muted">Відповіді й так зберігаються автоматично. Кнопка просто позначає, що ти закінчив. Редагувати можна і після неї.</p>
-      <div><button class="btn" id="submit" type="button" disabled>Здати домашку</button></div>
-      <p id="doneMsg" class="ok" hidden><b>Здано. Не показуй відповіді нікому до сесії.</b></p>
-    </div>
-  </section>
-
-  <section class="card" id="ready">
-    <div class="tabrow"><span class="tab">Готові відповіді</span><span class="side">для Данила</span></div>
-    <div class="inner">
-      <div id="readyLogin" class="row">
-        <input type="password" id="readyPw" autocomplete="current-password" placeholder="пароль" aria-label="Пароль">
-        <button class="btn" id="readyOpen" type="button">Відкрити</button>
-      </div>
-      <p id="readyErr" class="warn" hidden></p>
-      <div id="readyList" hidden>
-        <p class="muted" id="readySum"></p>
-        <div class="row" id="readyPeople"></div>
-        <div class="row" style="margin-top:6px"><button class="btn ghost" id="readyRefresh" type="button">Оновити</button><a class="btn ghost" href="answers.html" style="text-decoration:none">Усі відповіді і пул назв →</a></div>
-      </div>
-    </div>
-  </section>
-
-  <dialog id="dlg" aria-labelledby="dlgTitle">
-    <div class="tabrow"><button class="btn ghost" id="dlgClose" type="button">← Назад</button><span class="tab" id="dlgTitle">—</span></div>
-    <div class="inner" id="dlgBody"></div>
-    <div class="dlgnav"><button class="btn ghost" id="dlgPrev" type="button">←</button><button class="btn ghost" id="dlgBack" type="button">До списку</button><button class="btn ghost" id="dlgNext" type="button">→</button></div>
-  </dialog>
-
 </div>
-<script src="config.js"></script>
-<script>
-(function(){
-  const FORM="naming-1";
-  const FIELDS=["brief1","brief2","brief3","win","have","need","say"];
-  const CFG=window.DOT_CONFIG||{};
-  const URL_OK=/^https:\/\/script\.google\.com\/.+\/exec$/.test(CFG.SCRIPT_URL||"");
-  const $=s=>document.querySelector(s);
-  const areas=[...document.querySelectorAll("textarea[data-field]")];
-  const state={name:"",submitted:false,changed:false,submittedAt:"",snap:null}; FIELDS.forEach(f=>state[f]="");
-  const LS="dot-"+FORM;
-  let timer=null, inflight=false, dirty=false, sending=false;
-
-  const who=$("#who");
-  (CFG.TEAM||[]).forEach(n=>{const b=document.createElement("button");b.type="button";b.className="chip";b.dataset.name=n;b.textContent=n;b.setAttribute("aria-pressed","false");who.appendChild(b)});
-  const chips=[...who.querySelectorAll(".chip")];
-
-  const lines=t=>t.split("\n").map(s=>s.trim()).filter(Boolean).length;
-  const setSave=(t,cls)=>{const e=$("#saveState");e.textContent=t;e.className=cls||"muted"};
-  const snapNow=()=>JSON.stringify(FIELDS.map(f=>state[f]||""));
-  function local(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
-  function render(){
-    chips.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.name===state.name)));
-    document.querySelectorAll(".count").forEach(c=>{const n=lines($("#"+c.dataset.for).value);c.textContent=n+" / 15–20";c.classList.toggle("ok",n>=15)});
-    const filled=FIELDS.filter(f=>{const v=(state[f]||"").trim();return f.startsWith("brief")?lines(v)>=15:v.length>0}).length;
-    $("#prog").textContent="Заповнено "+filled+" / 7";
-    const btn=$("#submit");
-    btn.disabled=!state.name||sending;
-    btn.textContent=sending?"Надсилаю…":(!state.submitted||state.changed?"Здати відповіді":"Здано ✓");
-    btn.classList.toggle("ghost",state.submitted&&!state.changed&&!sending);
-    const m=$("#doneMsg");
-    if(state.submitted){m.hidden=false;m.innerHTML="";const b=document.createElement("b");
-      b.textContent=state.changed?"Ти змінив відповіді після здачі. Натисни «Здати відповіді», щоб здати нову версію.":("Здано"+(state.submittedAt?" о "+state.submittedAt:"")+". Не показуй відповіді нікому до сесії.");m.appendChild(b)}
-    else m.hidden=true;
-  }
-  function schedule(){local();dirty=true;clearTimeout(timer);
-    if(!state.name){setSave("Обери своє ім'я, щоб зберігати");return}
-    if(!URL_OK){setSave("Збережено в цьому браузері");return}
-    setSave("Є незбережені зміни…");timer=setTimeout(push,2000)}
-  async function push(){
-    if(!URL_OK||!state.name||!dirty) return;
-    if(inflight){clearTimeout(timer);timer=setTimeout(push,800);return}
-    inflight=true;dirty=false;setSave("Зберігаю…");
-    const data={};FIELDS.forEach(f=>data[f]=state[f]);
-    try{
-      const r=await fetch(CFG.SCRIPT_URL,{method:"POST",body:JSON.stringify({form:FORM,name:state.name,submitted:state.submitted,data})});
-      const j=await r.json();
-      if(!j.ok) throw new Error(j.error||"error");
-      setSave("Збережено ✓","ok");
-    }catch(e){dirty=true;setSave("Немає зв'язку — збережено в браузері, спробую ще раз","warn");clearTimeout(timer);timer=setTimeout(push,6000)}
-    finally{inflight=false}
-  }
-
-  try{const d=JSON.parse(localStorage.getItem(LS)||"null");if(d)Object.assign(state,d)}catch(e){}
-  if(state.submitted&&state.snap==null)state.snap=state.changed?"":snapNow();
-  areas.forEach(a=>{a.value=state[a.dataset.field]||"";
-    a.addEventListener("input",()=>{state[a.dataset.field]=a.value;if(state.submitted)state.changed=snapNow()!==state.snap;render();schedule()});
-    a.addEventListener("blur",()=>{if(dirty){clearTimeout(timer);push()}})});
-  chips.forEach(b=>b.addEventListener("click",()=>{state.name=b.dataset.name;render();schedule()}));
-  $("#submit").addEventListener("click",async()=>{
-    state.submitted=true;state.changed=false;state.snap=snapNow();
-    state.submittedAt=new Date().toLocaleTimeString("uk-UA",{hour:"2-digit",minute:"2-digit"});
-    sending=true;render();local();clearTimeout(timer);dirty=true;
-    while(inflight) await new Promise(r=>setTimeout(r,200));
-    await push();sending=false;render();
-  });
-  window.addEventListener("pagehide",()=>{if(dirty&&URL_OK&&state.name){const data={};FIELDS.forEach(f=>data[f]=state[f]);
-    try{navigator.sendBeacon(CFG.SCRIPT_URL,JSON.stringify({form:FORM,name:state.name,submitted:state.submitted,data}))}catch(e){}}});
-  $("#setupNote").hidden=URL_OK;
-  render();
-  if(state.name) setSave(URL_OK?"Відновлено з цього пристрою":"Збережено в цьому браузері");
-})();
-</script>
-<script>
-(function(){
-  const FORM="naming-1",CFG=window.DOT_CONFIG||{},KEY="dot-admin-key";
-  const LABELS={brief1:"Бриф №1 — Наш",brief2:"Бриф №2 — Конкурент",brief3:"Бриф №3 — Інша річ",win:"↑ Перемога",have:"→ Що маємо",need:"↓ Чого бракує",say:"← Що сказати"};
-  const $=s=>document.querySelector(s);
-  const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
-  const lines=t=>String(t||"").split("\n").map(s=>s.trim()).filter(Boolean);
-  const fmt=d=>{try{return new Date(d).toLocaleString("uk-UA",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}catch(e){return""}};
-  let items=[];
-  async function load(key){
-    const r=await fetch(CFG.SCRIPT_URL+"?form="+FORM+"&key="+encodeURIComponent(key));const j=await r.json();
-    if(!j.ok) throw new Error(j.error||"err"); return j.items||[];
-  }
-  function draw(){
-    const by={};items.forEach(i=>by[i.name]=i);
-    const team=CFG.TEAM||[];
-    $("#readySum").textContent="Здали "+items.filter(i=>i.submitted).length+" / "+team.length+". Натисни на ім'я, щоб відкрити відповіді.";
-    const box=$("#readyPeople");box.textContent="";
-    team.forEach(n=>{const i=by[n];const b=el("button","chip",n+(i?(i.submitted?" ✓":" · пише"):" · —"));b.type="button";
-      if(i&&i.submitted)b.setAttribute("aria-pressed","true");
-      if(!i){b.disabled=true;b.style.opacity=".45"} else b.addEventListener("click",()=>openDlg(i));
-      box.appendChild(b)});
-  }
-  let order=[],cur=-1,dlgPushed=false;
-  const dlg=$("#dlg");
-  function openDlg(i){
-    order=(CFG.TEAM||[]).map(n=>items.find(x=>x.name===n)).filter(Boolean);cur=order.indexOf(i);
-    fill(i);
-    if(!dlg.open){if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","");
-      try{history.pushState({dotDlg:1},"");dlgPushed=true}catch(e){}}
-  }
-  function step(d){if(!order.length)return;cur=(cur+d+order.length)%order.length;fill(order[cur]);dlg.scrollTop=0}
-  function hide(){if(dlg.close)dlg.close();else dlg.removeAttribute("open")}
-  function closeDlg(){if(dlgPushed){history.back()}else hide()}
-  window.addEventListener("popstate",()=>{if(dlg.open){dlgPushed=false;hide()}});
-  dlg.addEventListener("cancel",e=>{e.preventDefault();closeDlg()});
-  dlg.addEventListener("close",()=>{if(dlgPushed){dlgPushed=false;history.back()}document.getElementById("ready").scrollIntoView({block:"start"})});
-  function fill(i){
-    $("#dlgTitle").textContent=i.name+(i.submitted?" · здано":" · ще пише");
-    const body=$("#dlgBody");body.textContent="";
-    body.appendChild(el("p","hint","останнє збереження: "+fmt(i.updatedAt)));
-    Object.keys(LABELS).forEach(f=>{const v=String((i.data||{})[f]||"");const a=el("div","ans");
-      a.appendChild(el("p","hint",LABELS[f]+(f.startsWith("brief")?" · "+lines(v).length+" назв":"")));
-      a.appendChild(el("pre","",v.trim()||"—"));body.appendChild(a)});
-    const many=order.length>1;$("#dlgPrev").hidden=$("#dlgNext").hidden=!many;
-    if(many){$("#dlgPrev").textContent="← "+order[(cur-1+order.length)%order.length].name;$("#dlgNext").textContent=order[(cur+1)%order.length].name+" →"}
-  }
-  async function open(key){
-    $("#readyErr").hidden=true;
-    try{items=await load(key);try{localStorage.setItem(KEY,key)}catch(e){}
-      $("#readyLogin").hidden=true;$("#readyList").hidden=false;draw()}
-    catch(e){const m=$("#readyErr");m.hidden=false;m.textContent=/пароль/i.test(e.message)?"Невірний пароль.":"Немає зв'язку зі складом. Спробуй ще раз."}
-  }
-  $("#readyOpen").addEventListener("click",()=>{const k=$("#readyPw").value.trim();if(k)open(k)});
-  $("#readyPw").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#readyOpen").click()}});
-  $("#readyRefresh").addEventListener("click",()=>{let k="";try{k=localStorage.getItem(KEY)||""}catch(e){}if(k)open(k)});
-  $("#dlgClose").addEventListener("click",closeDlg);
-  $("#dlgBack").addEventListener("click",closeDlg);
-  $("#dlgPrev").addEventListener("click",()=>step(-1));
-  $("#dlgNext").addEventListener("click",()=>step(1));
-  dlg.addEventListener("click",e=>{if(e.target===dlg)closeDlg()});
-  let k="";try{k=localStorage.getItem(KEY)||""}catch(e){}
-  if(k&&/\/exec$/.test(CFG.SCRIPT_URL||""))open(k);
-})();
-</script>
 </body>
 </html>
