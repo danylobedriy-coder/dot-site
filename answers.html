@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Неймінг DOT — відповіді</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap wide">
+
+  <section class="card" id="login">
+    <div class="tabrow"><span class="tab">DOT / відповіді</span></div>
+    <div class="inner">
+      <h1>Відповіді команди</h1>
+      <p class="muted">Сторінка для Данила. Введи пароль, який стоїть у скрипті складу.</p>
+      <form id="loginForm" class="row">
+        <label class="q" for="pw" hidden>Пароль</label>
+        <input type="password" id="pw" autocomplete="current-password" placeholder="пароль">
+        <button class="btn" type="submit">Відкрити</button>
+      </form>
+      <p id="loginErr" class="warn" hidden></p>
+    </div>
+  </section>
+
+  <div id="app" hidden>
+    <div class="status" role="status" aria-live="polite">
+      <b id="summary">—</b>
+      <span class="row"><button class="btn ghost" id="refresh" type="button">Оновити</button><button class="btn ghost" id="logout" type="button">Вийти</button></span>
+    </div>
+
+    <section class="card" style="margin-top:22px">
+      <div class="tabrow"><span class="tab">Хто здав</span><span class="side" id="updated"></span></div>
+      <div class="inner"><div class="row" id="team"></div></div>
+    </section>
+
+    <div class="tabs" role="tablist" style="margin-top:22px">
+      <button class="chip" role="tab" aria-pressed="true" data-view="people">По людях</button>
+      <button class="chip" role="tab" aria-pressed="false" data-view="diamond">Діамант разом</button>
+      <button class="chip" role="tab" aria-pressed="false" data-view="pool">Назви для сесії</button>
+    </div>
+
+    <div id="view-people" class="grid" style="margin-top:22px"></div>
+
+    <div id="view-diamond" style="margin-top:22px;display:grid;gap:22px" hidden></div>
+
+    <section class="card" id="view-pool" style="margin-top:22px" hidden>
+      <div class="tabrow"><span class="tab">Пул назв</span><span class="side" id="poolCount"></span></div>
+      <div class="inner">
+        <p class="muted">Усі назви з трьох брифів, без авторів і без брифу, перемішані, без повторів. Це таблиця для кроку 3 сесії.</p>
+        <div class="row"><button class="btn" id="shuffle" type="button">Перемішати ще раз</button><button class="btn ghost" id="copyPool" type="button">Скопіювати список</button></div>
+        <p id="copyMsg" class="ok" hidden></p>
+        <ol class="names-pool" id="pool"></ol>
+      </div>
+    </section>
+  </div>
+
+</div>
+<script src="config.js"></script>
+<script>
+(function(){
+  const FORM="naming-1";
+  const CFG=window.DOT_CONFIG||{};
+  const $=s=>document.querySelector(s);
+  const LABELS={brief1:"Бриф №1 — Наш",brief2:"Бриф №2 — Конкурент",brief3:"Бриф №3 — Інша річ",win:"⬆ Перемога",have:"➡ Що маємо",need:"⬇ Чого бракує",say:"⬅ Що сказати"};
+  const KEY="dot-admin-key";
+  let items=[], pool=[];
+
+  const lines=t=>String(t||"").split("\n").map(s=>s.trim()).filter(Boolean);
+  const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e};
+  function fmt(d){try{return new Date(d).toLocaleString("uk-UA",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}catch(e){return ""}}
+
+  async function load(key){
+    const u=CFG.SCRIPT_URL+"?form="+encodeURIComponent(FORM)+"&key="+encodeURIComponent(key);
+    const r=await fetch(u); const j=await r.json();
+    if(!j.ok) throw new Error(j.error||"Помилка");
+    return j.items||[];
+  }
+
+  function card(title,pillText,done){
+    const c=el("section","card"),tr=el("div","tabrow"),t=el("span","tab",title);tr.appendChild(t);
+    if(pillText){const s=el("span","side");const p=el("span","pill"+(done?" done":""),pillText);s.appendChild(p);tr.appendChild(s)}
+    const inn=el("div","inner");c.append(tr,inn);return [c,inn];
+  }
+
+  function render(){
+    const byName={};items.forEach(i=>byName[i.name]=i);
+    const team=(CFG.TEAM||[]);
+    const done=items.filter(i=>i.submitted).length;
+    $("#summary").textContent="Здали "+done+" / "+team.length;
+    $("#updated").textContent="оновлено "+fmt(new Date());
+    const t=$("#team");t.textContent="";
+    team.forEach(n=>{const i=byName[n];const p=el("span","pill"+(i&&i.submitted?" done":""),n+" · "+(i?(i.submitted?"здано":"пише"):"ще не почав"));p.style.padding="6px 10px";p.style.fontSize="14px";t.appendChild(p)});
+
+    // по людях
+    const vp=$("#view-people");vp.textContent="";
+    const people=team.filter(n=>byName[n]).concat(items.map(i=>i.name).filter(n=>!team.includes(n)));
+    if(!people.length){const [c,inn]=card("Поки порожньо");inn.appendChild(el("p","muted","Ніхто ще нічого не заповнив. Щойно хтось почне писати — його відповіді з'являться тут."));vp.appendChild(c)}
+    people.forEach(n=>{const i=byName[n];const [c,inn]=card(n,i.submitted?"здано":"пише",i.submitted);
+      inn.appendChild(el("p","hint","останнє збереження: "+fmt(i.updatedAt)));
+      Object.keys(LABELS).forEach(f=>{const a=el("div","ans");const v=String((i.data||{})[f]||"");
+        a.appendChild(el("p","hint",LABELS[f]+(f.startsWith("brief")?" · "+lines(v).length+" назв":"")));a.appendChild(el("pre","",v.trim()||"—"));inn.appendChild(a)});
+      vp.appendChild(c)});
+
+    // діамант разом
+    const vd=$("#view-diamond");vd.textContent="";
+    ["win","have","need","say"].forEach(f=>{const [c,inn]=card(LABELS[f]);
+      const any=people.filter(n=>String((byName[n].data||{})[f]||"").trim());
+      if(!any.length) inn.appendChild(el("p","muted","Поки ніхто не відповів."));
+      any.forEach(n=>{const a=el("div","ans");a.appendChild(el("p","hint",n));a.appendChild(el("pre","",String(byName[n].data[f]).trim()));inn.appendChild(a)});
+      vd.appendChild(c)});
+
+    // пул
+    const seen=new Set();pool=[];
+    items.forEach(i=>["brief1","brief2","brief3"].forEach(f=>lines((i.data||{})[f]).forEach(n=>{const k=n.toLowerCase();if(!seen.has(k)){seen.add(k);pool.push(n)}})));
+    shuffle();
+  }
+  function shuffle(){for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+    const ol=$("#pool");ol.textContent="";pool.forEach(n=>ol.appendChild(el("li","",n)));
+    $("#poolCount").textContent=pool.length+" назв";
+    if(!pool.length) ol.appendChild(el("li","muted","Поки немає жодної назви."));}
+
+  async function open(key){
+    $("#loginErr").hidden=true;
+    try{items=await load(key);try{localStorage.setItem(KEY,key)}catch(e){}
+      $("#login").hidden=true;$("#app").hidden=false;render()}
+    catch(e){$("#login").hidden=false;$("#app").hidden=true;const m=$("#loginErr");m.hidden=false;
+      m.textContent=/пароль/i.test(e.message)?"Невірний пароль.":"Не вдалося з'єднатися зі складом. Перевір інтернет і адресу в config.js."}
+  }
+  $("#loginForm").addEventListener("submit",e=>{e.preventDefault();const k=$("#pw").value.trim();if(k)open(k)});
+  $("#refresh").addEventListener("click",()=>{let k="";try{k=localStorage.getItem(KEY)||""}catch(e){}open(k)});
+  $("#logout").addEventListener("click",()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()});
+  $("#shuffle").addEventListener("click",shuffle);
+  $("#copyPool").addEventListener("click",async()=>{const m=$("#copyMsg");try{await navigator.clipboard.writeText(pool.join("\n"));m.textContent="Скопійовано "+pool.length+" назв."}catch(e){m.textContent="Не вдалося скопіювати — виділи список вручну."}m.hidden=false});
+  document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    ["people","diamond","pool"].forEach(v=>$("#view-"+v).hidden=v!==b.dataset.view)}));
+
+  if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(CFG.SCRIPT_URL||"")){const m=$("#loginErr");m.hidden=false;m.textContent="Сайт ще не підключено до складу: встав адресу Apps Script у config.js."}
+  else{let k="";try{k=localStorage.getItem(KEY)||""}catch(e){} if(k) open(k)}
+})();
+</script>
+</body>
+</html>
